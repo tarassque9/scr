@@ -17,8 +17,6 @@ import sys
 
 
 
-
-
 class WebSpider(scrapy.Spider):
 
     name = 'webspider'
@@ -27,7 +25,6 @@ class WebSpider(scrapy.Spider):
     start_urls =['http://www.tauntondeeds.com/Searches/ImageSearch.aspx']
 
     res_dict = {}
-    n = 0
     classes = ['gridRow', 'gridAltRow']
 
     
@@ -39,57 +36,18 @@ class WebSpider(scrapy.Spider):
 
     def parse(self, response):
         
-        #print(response.body)
-        print('-----')
-
-
-        page1 = self.open_json('form_data.json')
-        page2 = self.open_json('form_data2.json')
-        form_datas = [page1, page2]
-
-
-
-        #formdata = formdata['__EVENTARGUMENT'] = 'Page$2'
-        
-        #yield scrapy.FormRequest(response.url, formdata=formdata, callback=self.parce_page, meta={'formdata': formdata})
-
-        #page = response.meta['formdata']['__EVENTARGUMENT'] = 'Page$2'
-
-        #yield scrapy.FormRequest(response.url, formdata={'__EVENTARGUMENT': 'Page$2'}, callback=self.parce)
-        headers = {
-
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Encoding': 'gzip, deflate',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Connection': 'keep-alive',
-            'Content-Length': '35683',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': 'ASP.NET_SessionId=h1qytrvdolryflhnz0yye0bt',
-            'Host': 'www.tauntondeeds.com',
-            'Origin': 'http://www.tauntondeeds.com',
-            'Referer': 'http://www.tauntondeeds.com/Searches/ImageSearch.aspx',
-            'Upgrade-Insecure-Requests': '1',
-            'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:75.0) Gecko/20100101 Firefox/75.0'
-
-        }
+        form_datas = [self.open_json('form_data.json'), self.open_json('form_data2.json')]
 
         for page in form_datas:
-        
 
             yield scrapy.FormRequest(response.url, formdata=page, callback=self.parce_page)
-        #yield scrapy.FormRequest(response.url, formdata=page, callback=self.parce_page)
 
 
     def parce_page(self, response):
-        
-
-        # print(response.meta['formdata']['__EVENTARGUMENT'])
-        #print(response.meta['formdata'])
 
         for cl in self.classes: 
 
             for el in response.xpath(f'.//div/table/tr[@class="{cl}"]'):
-                self.n += 1
                 
                 res_list = el.xpath('.//td/text()').getall()
 
@@ -147,7 +105,7 @@ class WebSpider(scrapy.Spider):
                     'state': state,
                     'zip': zip_value
                         }
-            
+               
                    
 
         
