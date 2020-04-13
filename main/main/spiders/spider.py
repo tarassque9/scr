@@ -134,7 +134,7 @@ class WebSpider(scrapy.Spider):
                 
                 
 
-                self.res_dict = {
+                yield {
                     'datetime' : str(date),
                     'type': doc_type,
                     'book': book,
@@ -148,6 +148,6 @@ class WebSpider(scrapy.Spider):
                     'zip': zip_value
                         }
             
-                print(self.res_dict)    
+                   
 
         
